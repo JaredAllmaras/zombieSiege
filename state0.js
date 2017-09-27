@@ -18,6 +18,7 @@ demo.state0.prototype = {
         game.world.setBounds(0, 0, 1152, 640);
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         
+        //sets game map
         var map = game.add.tilemap('field');
         map.addTilesetImage('grass');
         map.addTilesetImage('rock');
@@ -28,6 +29,7 @@ demo.state0.prototype = {
         map.setCollisionBetween(2, true, 'grass');
         map.setCollision(1, true, 'grass');
         
+        //enables physics to player
         player = game.add.sprite(200, 200, 'hunter');
         game.physics.enable(player);
         player.body.collideWorldBounds = true;
@@ -35,7 +37,7 @@ demo.state0.prototype = {
         game.camera.follow(player);
         
         //Create Zombies 
-        zombies = game.add.group();
+        zombies = game.add.physicsGroup();
         zombies.enableBody = true;
         
         //create zombies 
@@ -45,19 +47,25 @@ demo.state0.prototype = {
             zombie.anchor.setTo(0.5, 0.5);
         }
         
+        //adds animations to zombies group
         zombies.callAll('animations.add', 'animations', 'upLeft', [4, 5, 6, 7], 8, true);
         zombies.callAll('animations.add', 'animations', 'upRight', [0, 1, 2, 3], 8, true);
         zombies.callAll('animations.add', 'animations', 'downLeft', [12, 13, 14, 15], 8, true);
         zombies.callAll('animations.add', 'animations', 'downRight', [8, 9, 10, 11], 8, true);
+        
+        //sets zombie to collide with one another
+        game.physics.arcade.collide(zombies, zombies);
         
         cursors = game.input.keyboard.createCursorKeys();
     },
     
     update: function() {
         
+        //causes zombies to constantly move towards player
         zombies.forEach(game.physics.arcade.moveToObject, game.physics.arcade, false, player, 100);
         
         
+        //checks angle between zombies and player and adjusts animation accordingly
         if(zombies.forEach(function(self) {
             angle = (Phaser.Math.normalizeAngle(game.physics.arcade.angleBetween(self, player)))
             
@@ -76,6 +84,7 @@ demo.state0.prototype = {
             , game.physics.arcade, false));
 
         
+        //game controls for player
         if(cursors.up.isDown){
           player.body.velocity.y = -vel;
         }
