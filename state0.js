@@ -39,8 +39,10 @@ demo.state0.prototype = {
         
         player.animations.add("upLeft", [0, 1, 2, 3], 8, true);
         player.animations.add("upRight", [4, 5, 6, 7], 8, true);
-        player.animations.add("downRight", [8, 9, 10, 11], 8, true);
-        player.animations.add("downLeft", [12, 13, 14, 15], 8, true);
+        player.animations.add("right", [8, 9, 10, 11], 8, true);
+        player.animations.add("left", [12, 13, 14, 15], 8, true);
+        player.animations.add("downRight", [16, 17, 18, 19], 8, true);
+        player.animations.add("downLeft", [20, 21, 22, 23], 8, true);
         
         //Create Zombies 
         zombies = game.add.group();
@@ -78,6 +80,7 @@ demo.state0.prototype = {
         
         
         //checks zombieAngle between zombies and player and adjusts animation accordingly
+        //angle measured in radians and range normalized to [0,2pi]
         if(zombies.forEach(function(self) {
             zombieAngle = (Phaser.Math.normalizeAngle(game.physics.arcade.angleBetween(self, player)))
             
@@ -94,47 +97,51 @@ demo.state0.prototype = {
                 self.animations.play('upRight');
             }}
             , game.physics.arcade, false));
-
-
-        playerAngle = Phaser.Math.normalizeAngle(game.physics.arcade.angleToPointer(player));
-        
-        //controls direction player is facing
-        if(playerAngle >= 0 && playerAngle <= 1.5708) {
-            player.animations.play('downRight');
-            player.rotation = game.physics.arcade.angleToPointer(player)
-        }
-        if(playerAngle >= 1.5708 && playerAngle <= 3.14159) {
-            player.animations.play('downLeft');
-            player.rotation = Phaser.Math.reverseAngle(game.physics.arcade.angleToPointer(player));
-        }
-        if(playerAngle >= 3.14159 && playerAngle <= 4.71239) {
-            player.animations.play('upLeft');
-            player.rotation = Phaser.Math.reverseAngle(game.physics.arcade.angleToPointer(player));
-        }
-        if(playerAngle >= 4.71239 && playerAngle <= 6.28319) {
-            player.animations.play('upRight');
-            player.rotation = game.physics.arcade.angleToPointer(player);
-        }
-        
+ 
         //game controls for player
         if(cursors.up.isDown){
-          player.body.velocity.y = -vel;
+            player.body.velocity.y = -vel;
         }
         else if(cursors.down.isDown){
-          player.body.velocity.y = vel;
+            player.body.velocity.y = vel;
         }
         else{
-          player.body.velocity.y = 0;
+            player.body.velocity.y = 0;
         }
         if(cursors.left.isDown){
-          player.body.velocity.x = -vel;
+            player.body.velocity.x = -vel;
         }
         else if(cursors.right.isDown){
-          player.body.velocity.x = vel;
+            player.body.velocity.x = vel;
         }
         else{
-          player.body.velocity.x = 0;
-        }       
+            player.body.velocity.x = 0;
+            if (!cursors.down.isDown && !cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown) {
+                player.animations.stop(null, true);
+            }
+        }
+            
+         playerAngle = Phaser.Math.normalizeAngle(game.physics.arcade.angleToPointer(player));
+        
+        //controls direction player is facing
+        if((playerAngle >= 0 && playerAngle <= 0.523599) || (playerAngle >= 5.75959 && playerAngle < 0)) {
+            player.animations.play('right');
+        }
+        if(playerAngle >= 0.523599 && playerAngle < 1.5708) {
+            player.animations.play('downRight');
+        }
+        if(playerAngle >= 1.5708 && playerAngle < 2.61799 ) {
+            player.animations.play('downLeft');
+        }
+        if(playerAngle >= 2.61799 && playerAngle < 3.66519) {
+            player.animations.play('left');
+        }
+        if(playerAngle >= 3.66519 && playerAngle < 4.71239) {
+            player.animations.play('upRight');
+        }
+        if(playerAngle >= 4.71239 && playerAngle < 5.75959) {
+            player.animations.play('upLeft');
+        }
     }
 };
         
