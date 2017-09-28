@@ -37,7 +37,7 @@ demo.state0.prototype = {
         game.camera.follow(player);
         
         //Create Zombies 
-        zombies = game.add.physicsGroup();
+        zombies = game.add.group();
         zombies.enableBody = true;
         
         //create zombies 
@@ -61,8 +61,11 @@ demo.state0.prototype = {
     
     update: function() {
         
+        
+        
         //causes zombies to constantly move towards player
         zombies.forEach(game.physics.arcade.moveToObject, game.physics.arcade, false, player, 100);
+        game.physics.arcade.collide(zombies, zombies);
         
         
         //checks angle between zombies and player and adjusts animation accordingly
