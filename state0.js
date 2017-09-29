@@ -1,4 +1,4 @@
-var demo = {}, cursors, vel = 200,  rocks, grass, player, zombies, W, A, S, D;
+var demo = {}, cursors, vel = 200,  rocks, grass, player, zombies, W, A, S, D , bullets, fireRate = 100, nextFire = 0;
 
 demo.state0 = function(){};
 
@@ -7,7 +7,7 @@ demo.state0.prototype = {
         game.load.tilemap('field', 'assets/Tilemaps/field.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('grass', 'assets/Tilemaps/grass.png');
         game.load.image('rock', 'assets/Tilemaps/rock.png');
-
+		game.load.image('bullet', 'assets/sprites/bullet.png');
         game.load.spritesheet('hunter', 'assets/sprites/hunterSprites.png', 58, 69);
         game.load.spritesheet('zombie','assets/sprites/zombieSprites.png', 52, 67);
     },
@@ -64,6 +64,16 @@ demo.state0.prototype = {
         zombies.callAll('animations.add', 'animations', 'downLeft', [12, 13, 14, 15], 8, true);
         zombies.callAll('animations.add', 'animations', 'downRight', [8, 9, 10, 11], 8, true);
         
+		//Create Bullets and the group
+		bullets = game.add.group();
+		bullets.enableBody = true;
+		bullets.physicsBodyType = Phaser.Physics.ARCADE;
+		
+		bullets.createMultiple(50, 'bullet');
+		bullets.setAll('checkWorldBounds',true);
+		bullets.setAll('outOfBoundsKill', true);
+		
+		
         //sets zombie to collide with one another
         game.physics.arcade.collide(zombies, zombies);
         
@@ -143,6 +153,29 @@ demo.state0.prototype = {
         if(playerAngle >= 4.71239 && playerAngle < 5.75959) {
             player.animations.play('upLeft');
         }
+		
+		if (game.input.activePointer.isDown)
+    	{
+        fire();
+    	}
     }
+
 };
+
+
+	
+	
+function fire() {
+
+    if (game.time.now > nextFire && bullets.countDead() > 0)
+    {
+        nextFire = game.time.now + fireRate;
+
+        var bullet = bullets.getFirstDead();
+
+        bullet.reset(player.x - 8, player.y - 8);
+
+        game.physics.arcade.moveToPointer(bullet, 300);
+    }
+}
         
