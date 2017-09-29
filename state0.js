@@ -1,23 +1,35 @@
-var demo = {}, cursors, vel = 200,  rocks, grass, player, zombies;
+var demo = {}, cursors, vel = 200,  rocks, grass, player, zombies, bullets, fireRate = 100, nextFire = 0;
 
 demo.state0 = function(){};
 
-demo.state0.prototype = {    
+demo.state0.prototype = { 
+	
+	
     preload: function() {
         game.load.tilemap('field', 'assets/Tilemaps/field.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('grass', 'assets/Tilemaps/grass.png');
         game.load.image('rock', 'assets/Tilemaps/rock.png');
+		game.load.image('bullet', 'assets/sprites/bullet.png');
+
 
         game.load.spritesheet('hunter', 'assets/sprites/hunter.png');
         game.load.spritesheet('zombie','assets/sprites/zombieSprites.png', 52, 67);
     },
+	
+	
+	
+	
     
     create: function() {
+		
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#DDDDDD';
         game.world.setBounds(0, 0, 1152, 640);
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         
+		
+		
+		
         //sets game map
         var map = game.add.tilemap('field');
         map.addTilesetImage('grass');
@@ -52,6 +64,17 @@ demo.state0.prototype = {
         zombies.callAll('animations.add', 'animations', 'upRight', [0, 1, 2, 3], 8, true);
         zombies.callAll('animations.add', 'animations', 'downLeft', [12, 13, 14, 15], 8, true);
         zombies.callAll('animations.add', 'animations', 'downRight', [8, 9, 10, 11], 8, true);
+		
+		/*TP  -  Create Bullets, create a group for the multiple bullets and enable the body. checkWorldBounds and outOfBoundsKill removes bullet after leaving screen
+		*/
+		bullets = game.add.group();
+		bullets.enableBody = true;
+		bullets.physicsBodyType = Phaser.Physics.ARCADE; 
+		
+		bullets.createMultiple(50, 'bullet');
+		bullets.setAll('checkWorldBounds', true);
+		bullets.setAll('outOfBoundsKill',true);
+		
         
         //sets zombie to collide with one another
         game.physics.arcade.collide(zombies, zombies);
@@ -105,7 +128,33 @@ demo.state0.prototype = {
         }
         else{
           player.body.velocity.x = 0;
-        }       
-    }
+        } 
+	
+	//TP - Trying to fire bullets and distribute each bullet from the pointer in the direction of the pointer. 	
+			function fire(){
+					
+				if (game.time.now > nextFire && bullets.countDead() > 0)
+				{
+
+				nextFire = game.time.now + fireRate;
+
+				var bullet = bullets.getFirstDead();
+
+				bullet.reset(sprite.x - 8, sprite.y - 8);
+
+				game.physics.arcade.moveToPointer(bullet, 300);
+
+				}
+				
+			}
+			
+		
+
+		
+}
+	
 };
-        
+    
+
+
+	
