@@ -53,6 +53,7 @@ demo.state0.prototype = {
         for ( var i = 0; i<50; i++)
         {
             var zombie = zombies.create(game.world.randomX,game.world.randomY,'zombie');
+            zombie.body.collideWorldBounds = true;
             zombie.scale.setTo(0.7, 0.7);
             zombie.anchor.setTo(0.5, 0.5);
         }
@@ -120,10 +121,10 @@ demo.state0.prototype = {
                 player.animations.stop(null, true);
             }
         }
-            
-         playerAngle = Phaser.Math.normalizeAngle(game.physics.arcade.angleToPointer(player));
         
         //controls direction player is facing
+        playerAngle = Phaser.Math.normalizeAngle(game.physics.arcade.angleToPointer(player));
+    
         if((playerAngle >= 0 && playerAngle <= 0.523599) || (playerAngle >= 5.75959 && playerAngle < 0)) {
             player.animations.play('right');
         }
