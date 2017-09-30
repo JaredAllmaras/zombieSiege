@@ -1,5 +1,4 @@
-var demo = {}, cursors, vel = 200,  rocks, grass, player, zombies, W, A, S, D , bullets, fireRate = 100, nextFire = 0;
-
+var demo = {}, cursors, vel = 200,  rocks, grass, player, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200;
 demo.state0 = function(){};
 
 demo.state0.prototype = {    
@@ -37,18 +36,19 @@ demo.state0.prototype = {
         player.anchor.setTo(0.5, 0.5);
         game.camera.follow(player);
         
-        player.animations.add("upLeft", [0, 1, 2, 3], 8, true);
-        player.animations.add("upRight", [4, 5, 6, 7], 8, true);
-        player.animations.add("right", [8, 9, 10, 11], 8, true);
-        player.animations.add("left", [12, 13, 14, 15], 8, true);
-        player.animations.add("downRight", [16, 17, 18, 19], 8, true);
-        player.animations.add("downLeft", [20, 21, 22, 23], 8, true);
+        player.animations.add('upRight', [0, 1, 2, 3], 8, true);
+        player.animations.add('upLeft', [4, 5, 6, 7], 8, true);
+        player.animations.add('right', [8, 9, 10, 11], 8, true);
+        player.animations.add('left', [12, 13, 14, 15], 8, true);
+        player.animations.add('downRight', [16, 17, 18, 19], 8, true);
+        player.animations.add('downLeft', [20, 21, 22, 23], 8, true);
+        player.animations.add('up', [24, 25, 26,27], 8, true);
+        player.animations.add('down', [28, 29, 30, 31], 8, true);
         
-        //Create Zombies 
+        //Create a group of Zombies 
         zombies = game.add.group();
-        //zombies.scale.set(0.7, 0.7);
-        zombies.enableBody = true;
-        
+        zombies.enableBody = true;       
+
         //create zombies 
         for ( var i = 0; i<50; i++)
         {
@@ -56,7 +56,9 @@ demo.state0.prototype = {
             zombie.body.collideWorldBounds = true;
             zombie.scale.setTo(0.7, 0.7);
             zombie.anchor.setTo(0.5, 0.5);
+            zombie.health = 100;
         }
+        
         
         //adds animations to zombies group
         zombies.callAll('animations.add', 'animations', 'upLeft', [4, 5, 6, 7], 8, true);
@@ -72,6 +74,7 @@ demo.state0.prototype = {
 		bullets.createMultiple(50, 'bullet');
 		bullets.setAll('checkWorldBounds',true);
 		bullets.setAll('outOfBoundsKill', true);
+        bullets.damage = 10;
 		
 		
         //sets zombie to collide with one another
@@ -135,47 +138,73 @@ demo.state0.prototype = {
         //controls direction player is facing
         playerAngle = Phaser.Math.normalizeAngle(game.physics.arcade.angleToPointer(player));
     
-        if((playerAngle >= 0 && playerAngle <= 0.523599) || (playerAngle >= 5.75959 && playerAngle < 0)) {
+        //These statements determine the offset x,y coordinates of the gun determined by their animation and angle to
+        //mouse pointer
+        if((playerAngle >= 0 && playerAngle <= 0.4472) || (playerAngle >= 5.30959 && playerAngle < 0)) {
             player.animations.play('right');
+            barrelX = player.centerX + 14;
+            barrelY = player.centerY - 14;
         }
-        if(playerAngle >= 0.523599 && playerAngle < 1.5708) {
+        if(playerAngle >= 0.4472 && playerAngle < 1.39626) {
             player.animations.play('downRight');
+            barrelX = player.centerX + 26;
+            barrelY = player.centerY + 8;
         }
-        if(playerAngle >= 1.5708 && playerAngle < 2.61799 ) {
+        if(playerAngle >= 1.39626 && playerAngle < 1.91986) {
+            player.animations.play('down');
+            barrelX = player.centerX + 28;
+            barrelY = player.centerY + 24;
+        }
+        if(playerAngle >= 1.91986 && playerAngle < 2.61799 ) {
             player.animations.play('downLeft');
+            barrelX = player.centerX + 4;
+            barrelY = player.centerY + 28;
         }
         if(playerAngle >= 2.61799 && playerAngle < 3.66519) {
             player.animations.play('left');
+            barrelX = player.centerX - 12;
+            barrelY = player.centerY + 24;
         }
-        if(playerAngle >= 3.66519 && playerAngle < 4.71239) {
-            player.animations.play('upRight');
-        }
-        if(playerAngle >= 4.71239 && playerAngle < 5.75959) {
+        if(playerAngle >= 3.66519 && playerAngle < 4.53786) {
             player.animations.play('upLeft');
+            barrelX = player.centerX - 30;
+            barrelY = player.centerY - 4;
         }
-		
-		if (game.input.activePointer.isDown)
-    	{
-        fire();
+        if(playerAngle >= 4.53786 && playerAngle < 4.88692) {
+            player.animations.play('up');
+            barrelX = player.centerX - 28;
+            barrelY = player.centerY - 24;
+        }
+        if(playerAngle >= 4.88692 && playerAngle < 5.75959) {
+            player.animations.play('upRight');
+            barrelX = player.centerX + 8;
+            barrelY = player.centerY - 30;
+        }
+        if (game.input.activePointer.isDown) {
+            this.fire(barrelX, barrelY);
     	}
-    }
+        
+        game.physics.arcade.overlap(zombies, bullets, this.hitGroup);
+    },    	
 
+    fire: function(barrelX, barrelY) {
+
+        if (game.time.now > nextFire && bullets.countDead() > 0)
+        {
+            nextFire = game.time.now + fireRate;
+
+            bullet = bullets.getFirstDead();
+
+            bullet.reset(barrelX, barrelY);
+
+            game.physics.arcade.moveToPointer(bullet, 300);
+            bullet.rotation = game.physics.arcade.angleToPointer(bullet);
+        }
+    },
+
+    hitGroup: function(enemyGroup) {
+        bullet.kill();
+        enemyGroup.damage(10);
+      }
 };
-
-
-	
-	
-function fire() {
-
-    if (game.time.now > nextFire && bullets.countDead() > 0)
-    {
-        nextFire = game.time.now + fireRate;
-
-        var bullet = bullets.getFirstDead();
-
-        bullet.reset(player.x - 8, player.y - 8);
-
-        game.physics.arcade.moveToPointer(bullet, 300);
-    }
-}
         
