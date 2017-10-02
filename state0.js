@@ -1,5 +1,8 @@
-var demo = {}, cursors, vel = 200,  rocks, grass, player, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200;
+var demo = {}, cursors, vel = 200,  rocks, grass, player, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar;
 demo.state0 = function(){};
+
+
+
 
 demo.state0.prototype = {    
     preload: function() {
@@ -27,7 +30,10 @@ demo.state0.prototype = {
 
         map.setCollisionBetween(2, true, 'grass');
         map.setCollision(1, true, 'grass');
-        
+		
+		/////////////////////////////////////////////////////
+        //CODE FOR PLAYER
+		/////////////////////////////////////////////////////
         //enables physics to player and sets player settings
         player = game.add.sprite(200, 200, 'hunter');
         game.physics.enable(player);
@@ -44,11 +50,23 @@ demo.state0.prototype = {
         player.animations.add('downLeft', [20, 21, 22, 23], 8, true);
         player.animations.add('up', [24, 25, 26,27], 8, true);
         player.animations.add('down', [28, 29, 30, 31], 8, true);
-        
+        player.health = 100;
+	
+
+		player.events.onKilled.add(function(){
+			//PUT ANIMATION HERE FOR HUNTER DYING
+			
+			player.kill();
+		});
+		
+		
+		/////////////////////////////////////////////////
+		//CODE FOR ZOMBIES
+		////////////////////////////////////////////////
         //Create a group of Zombies 
         zombies = game.add.group();
         zombies.enableBody = true;       
-
+		zombies.damageAmount = 10;
         //create zombies 
         for ( var i = 0; i<50; i++)
         {
@@ -82,6 +100,14 @@ demo.state0.prototype = {
         
         //creates a listener for keyboard input
         cursors = game.input.keyboard.createCursorKeys();
+		
+		//DISPLAY HEALTH
+		healthBar = game.add.text(game.world.width - 150,10,'HEALTH: ' + player.health +'%', {font:'20px Cambria', fill: '#fa0a0a'});
+		healthBar.render = function(){
+			healthBar.text = 'HEALTH : '+Math.max(player.health,0)+'%';
+		};
+
+		
     },
     
     update: function() {
@@ -180,12 +206,21 @@ demo.state0.prototype = {
             barrelX = player.centerX + 8;
             barrelY = player.centerY - 30;
         }
-        if (game.input.activePointer.isDown) {
+		
+		//FIRE BULLETS 
+        if (player.alive = true && game.input.activePointer.isDown) {
             this.fire(barrelX, barrelY);
     	}
         
         game.physics.arcade.overlap(zombies, bullets, this.hitGroup);
-    },    	
+		game.physics.arcade.overlap(player, zombies, this.collidePlayer);
+
+    },  
+	
+	render: function(){
+		//Helps debug code
+		
+	},
 
     fire: function(barrelX, barrelY) {
 
@@ -203,8 +238,24 @@ demo.state0.prototype = {
     },
 
     hitGroup: function(enemyGroup) {
-        bullet.kill();
         enemyGroup.damage(10);
-      }
+		player.damage(enemyGroup.damage)
+		bullet.kill();
+
+      },
+	
+	
+	
+	
+	//give hunter health and other game objects health
+
+	collidePlayer: function(player, zombie)
+	{
+		player.damage(zombie.damageAmount);
+		healthBar.render();
+		player.health-= 10;
+
+	}
+
 };
         
