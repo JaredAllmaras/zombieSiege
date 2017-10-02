@@ -107,7 +107,7 @@ demo.state0.prototype = {
 			healthBar.text = 'HEALTH : '+Math.max(player.health,0)+'%';
 		};
 		healthBar.fixedToCamera = true;
-		healthBar.cameraOffset.setTo(200,500);
+		healthBar.cameraOffset.setTo(2,5);
 
 		
     },
