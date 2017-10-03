@@ -166,7 +166,7 @@ demo.state0.prototype = {
     
         //These statements determine the offset x,y coordinates of the gun determined by their animation and angle to
         //mouse pointer
-        if((playerAngle >= 0 && playerAngle <= 0.4472) || (playerAngle >= 5.30959 && playerAngle < 0)) {
+        if((playerAngle >= 0 && playerAngle <= 0.4472) || (playerAngle >= 5.75959 && playerAngle < 0)) {
             player.animations.play('right');
             barrelX = player.centerX + 14;
             barrelY = player.centerY - 14;
@@ -209,7 +209,7 @@ demo.state0.prototype = {
 		
 		//FIRE BULLETS 
         if (player.alive = true && game.input.activePointer.isDown) {
-            this.fire(barrelX, barrelY);
+            this.fire(player.velocity, barrelX, barrelY);
     	}
         
         game.physics.arcade.overlap(zombies, bullets, this.hitGroup);
@@ -222,7 +222,7 @@ demo.state0.prototype = {
 		
 	},
 
-    fire: function(barrelX, barrelY) {
+    fire: function(playerVelocity, barrelX, barrelY) {
 
         if (game.time.now > nextFire && bullets.countDead() > 0)
         {
