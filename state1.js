@@ -1,55 +1,65 @@
 //Start of gameplay
-var cursors, vel = 200,  rocks, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar;
+var cursors, vel = 200,  collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar;
 
 demo.state1 = function(){};
 
 demo.state1.prototype = {    
     preload: function() {
-        game.load.tilemap('field', 'assets/Tilemaps/field.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('field', 'assets/Tilemaps/singleHouseMap.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('grass', 'assets/Tilemaps/grass.png');
-        game.load.image('rock', 'assets/Tilemaps/rock.png');
+        game.load.image('dirt', 'assets/Tilemaps/dirtTile.png');
+        game.load.image('house', 'assets/Tilemaps/house.png');
+        game.load.image('fence', 'assets/Tilemaps/fence.png');
+        game.load.image('fenceUp', 'assets/Tilemaps/fenceUp.png');
 		game.load.image('bullet', 'assets/sprites/bullet.png');
+        game.load.image('collision', 'assets/Tilemaps/collision.png');
         game.load.spritesheet('hunter', 'assets/sprites/hunterSprites.png', 58, 69);
         game.load.spritesheet('zombie','assets/sprites/zombieSprites.png', 52, 67);
         game.load.spritesheet('bloodSplatter', 'assets/sprites/bloodSpritesheet.png', 170, 120);
     },
-    
+
     create: function() {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#DDDDDD';
-        game.world.setBounds(0, 0, 1152, 640);
+        game.world.setBounds(0, 0, 4000, 3200);
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         
         //sets game map
         var map = game.add.tilemap('field');
-        map.addTilesetImage('grass');
-        map.addTilesetImage('rock');
-        
-        
+        map.addTilesetImage('collision', 'collision');
+        map.addTilesetImage('grass', 'grass');
+        map.addTilesetImage('dirt', 'dirt');
+        map.addTilesetImage('fenceUp', 'fenceUp');
+        map.addTilesetImage('fence', 'fence');
+        map.addTilesetImage('house', 'house');
+        collisions = map.createLayer('collisions');
         grass = map.createLayer('grass');
+        dirt = map.createLayer('dirt');
+        fence = map.createLayer('fence');
+        player = game.add.sprite(2000,900, 'hunter');
+           
 
-        map.setCollisionBetween(2, true, 'grass');
-        map.setCollision(1, true, 'grass');
+        map.setCollision(157, true, 'collisions');
 		
 		/////////////////////////////////////////////////////
         //CODE FOR PLAYER
 		/////////////////////////////////////////////////////
         //enables physics to player and sets player settings
-        player = game.add.sprite(200, 200, 'hunter');
+        
         game.physics.enable(player);
         player.body.collideWorldBounds = true;
         player.scale.setTo(0.7, 0.7);
         player.anchor.setTo(0.5, 0.5);
         game.camera.follow(player);
         
-        player.animations.add('upRight', [0, 1, 2, 3], 8, true);
-        player.animations.add('upLeft', [4, 5, 6, 7], 8, true);
-        player.animations.add('right', [8, 9, 10, 11], 8, true);
-        player.animations.add('left', [12, 13, 14, 15], 8, true);
-        player.animations.add('downRight', [16, 17, 18, 19], 8, true);
-        player.animations.add('downLeft', [20, 21, 22, 23], 8, true);
-        player.animations.add('up', [24, 25, 26,27], 8, true);
-        player.animations.add('down', [28, 29, 30, 31], 8, true);
+        player.animations.add('upRight', [0, 1, 2, 3], 9, true);
+        player.animations.add('upLeft', [4, 5, 6, 7], 9, true);
+        player.animations.add('right', [8, 9, 10, 11], 9, true);
+        player.animations.add('left', [12, 13, 14, 15], 9, true);
+        player.animations.add('downRight', [16, 17, 18, 19], 9, true);
+        player.animations.add('downLeft', [20, 21, 22, 23], 9, true);
+        player.animations.add('up', [24, 25, 26,27], 9, true);
+        player.animations.add('down', [28, 29, 30, 31], 9, true);
         player.health = 100;
         player.damage = 10;
 	
@@ -71,7 +81,8 @@ demo.state1.prototype = {
         //create zombies 
         for ( var i = 0; i<50; i++)
         {
-            zombie = zombies.create(game.world.randomX,game.world.randomY,'zombie');
+            zombie =
+            zombies.create(game.world.randomX,game.world.randomY,'zombie');
             zombie.body.collideWorldBounds = true;
             zombie.scale.setTo(0.7, 0.7);
             zombie.anchor.setTo(0.5, 0.5);
@@ -98,9 +109,6 @@ demo.state1.prototype = {
 		bullets.setAll('outOfBoundsKill', true);
         bullets.damage = 10;
 		
-		
-        //sets zombie to collide with one another
-        game.physics.arcade.collide(zombies, zombies);
         
         //creates a listener for keyboard input
         cursors = game.input.keyboard.createCursorKeys();
@@ -112,6 +120,7 @@ demo.state1.prototype = {
 		};
 		healthBar.fixedToCamera = true;
 		healthBar.cameraOffset.setTo(2,5);
+        house = map.createLayer('house');
         		
     },
     
@@ -122,6 +131,8 @@ demo.state1.prototype = {
         //causes zombies to constantly move towards player
         zombies.forEach(game.physics.arcade.moveToObject, game.physics.arcade, false, player, 100);
         game.physics.arcade.collide(zombies, zombies);
+        game.physics.arcade.collide(zombies, collisions);
+        game.physics.arcade.collide(player, collisions);
         
         
         //checks zombieAngle between zombies and player and adjusts animation accordingly
@@ -220,11 +231,10 @@ demo.state1.prototype = {
         game.physics.arcade.overlap(zombies, bullets, this.hitGroup);
 		game.physics.arcade.overlap(player, zombies, this.collidePlayer);
 
+
     },  
 	
 	render: function(){
-		//Helps debug code
-		
 	},
 
     
@@ -262,6 +272,23 @@ demo.state1.prototype = {
         blood.animations.add('bloodSplatter');
         blood.play('bloodSplatter', 15, false, true);
     },
+    
+    
+    /*
+    findObjectsByType: function(type, map, layer) {
+        var result = new Array();
+        map.objects[layer].forEach(function(element){
+          if(element.properties.type === type) {
+            //Phaser uses top left, Tiled bottom left so we have to adjust
+            //also keep in mind that the cup images are a bit smaller than the tile which is 16x16
+            //so they might not be placed in the exact position as in Tiled
+            element.y -= map.tileHeight;
+            result.push(element);
+          }      
+        });
+        return result;
+      }
+      */
 	
 
 };
