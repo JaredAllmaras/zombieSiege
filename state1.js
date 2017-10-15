@@ -144,6 +144,10 @@ demo.state1.prototype = {
 		healthBar = game.add.text(game.world.width - 150,10,'HEALTH: ' + player.health +'%', {font:'20px Cambria', fill: '#fa0a0a'});
 		healthBar.render = function(){
 			healthBar.text = 'HEALTH : '+ player.health +'%'; 
+            
+        //DISPLAY HOUSE
+        
+            
 		};
 		healthBar.fixedToCamera = true;
 		healthBar.cameraOffset.setTo(2,5);
