@@ -1,5 +1,5 @@
 //Start of gameplay
-var cursors, vel = 200,  collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar;
+var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
 
 demo.state1 = function(){};
 
@@ -16,6 +16,7 @@ demo.state1.prototype = {
         game.load.spritesheet('hunter', 'assets/sprites/hunterSprites.png', 58, 69);
         game.load.spritesheet('zombie','assets/sprites/zombieSprites.png', 52, 67);
         game.load.spritesheet('bloodSplatter', 'assets/sprites/bloodSpritesheet.png', 170, 120);
+        game.load.json('gameMap', 'assets/Tilemaps/singleHouseMap.json');
     },
 
     create: function() {
@@ -24,7 +25,32 @@ demo.state1.prototype = {
         game.world.setBounds(0, 0, 4000, 3200);
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         
-        //sets game map
+        //Grid used for zombie pathing
+        gameWidth = 4000 / 32;
+        gameHeight = 3200 / 32;
+        pathingGrid = new PF.Grid(gameWidth, gameHeight);
+        //Initializes a pathfinder object which utilizes A* algorithm 
+        pathFinder = new PF.AStarFinder();
+        
+        //Loads a copy of of the collision layer
+        var collisionLayer = game.cache.getJSON('gameMap');
+        var mapCopy = collisionLayer.layers[0].data;
+        var mapCopyWidth = mapCopy.length;
+        var mapCopyHeight = mapCopy[0].length;
+        
+        for (var row = 0 ; row > mapCopyWidth; row += 1) {
+            for (var col = 0 ; col > mapCopyHeight; col += 1) {
+                if (mapCopy[row][col] == 157) {
+                    mapCopy[row][col] = 1;
+                }
+            }
+        }
+        
+        
+        pathingGrid = new PF.Grid(mapCopy);
+        
+        
+        //LOADING MAP ASSETS AND MAP LAYERS
         var map = game.add.tilemap('field');
         map.addTilesetImage('collision', 'collision');
         map.addTilesetImage('grass', 'grass');
@@ -35,42 +61,10 @@ demo.state1.prototype = {
         collisions = map.createLayer('collisions');
         grass = map.createLayer('grass');
         dirt = map.createLayer('dirt');
-        fence = map.createLayer('fence');
-        player = game.add.sprite(2000,900, 'hunter');
-           
-
+        
         map.setCollision(157, true, 'collisions');
 		
-		/////////////////////////////////////////////////////
-        //CODE FOR PLAYER
-		/////////////////////////////////////////////////////
-        //enables physics to player and sets player settings
-        
-        game.physics.enable(player);
-        player.body.collideWorldBounds = true;
-        player.scale.setTo(0.7, 0.7);
-        player.anchor.setTo(0.5, 0.5);
-        game.camera.follow(player);
-        
-        player.animations.add('upRight', [0, 1, 2, 3], 9, true);
-        player.animations.add('upLeft', [4, 5, 6, 7], 9, true);
-        player.animations.add('right', [8, 9, 10, 11], 9, true);
-        player.animations.add('left', [12, 13, 14, 15], 9, true);
-        player.animations.add('downRight', [16, 17, 18, 19], 9, true);
-        player.animations.add('downLeft', [20, 21, 22, 23], 9, true);
-        player.animations.add('up', [24, 25, 26,27], 9, true);
-        player.animations.add('down', [28, 29, 30, 31], 9, true);
-        player.health = 100;
-        player.damage = 10;
-	
-
-		player.events.onKilled.add(function(){
-			//PUT ANIMATION HERE FOR HUNTER DYING
 			
-			player.kill();
-		});
-		
-		
 		/////////////////////////////////////////////////
 		//CODE FOR ZOMBIES
 		////////////////////////////////////////////////
@@ -112,6 +106,39 @@ demo.state1.prototype = {
         
         //creates a listener for keyboard input
         cursors = game.input.keyboard.createCursorKeys();
+        
+        //CREATES ANOTHER MAP LAYER RENDERED ON TOP OF BULLETS 
+        fence = map.createLayer('fence');
+        
+        /////////////////////////////////////////////////////
+        //CODE FOR PLAYER
+		/////////////////////////////////////////////////////
+        //enables physics to player and sets player settings
+        player = game.add.sprite(2000,900, 'hunter');
+        game.physics.enable(player);
+        player.body.collideWorldBounds = true;
+        player.scale.setTo(0.7, 0.7);
+        player.anchor.setTo(0.5, 0.5);
+        game.camera.follow(player);
+        
+        player.animations.add('upRight', [0, 1, 2, 3], 9, true);
+        player.animations.add('upLeft', [4, 5, 6, 7], 9, true);
+        player.animations.add('right', [8, 9, 10, 11], 9, true);
+        player.animations.add('left', [12, 13, 14, 15], 9, true);
+        player.animations.add('downRight', [16, 17, 18, 19], 9, true);
+        player.animations.add('downLeft', [20, 21, 22, 23], 9, true);
+        player.animations.add('up', [24, 25, 26,27], 9, true);
+        player.animations.add('down', [28, 29, 30, 31], 9, true);
+        player.health = 100;
+        player.damage = 10;
+        
+		player.events.onKilled.add(function(){
+			//PUT ANIMATION HERE FOR HUNTER DYING
+			player.kill();
+		});
+	
+        //CREATES TOP LAYER OF THE MAP, RENDERED ABOVE ALL ELSE
+        house = map.createLayer('house');
 		
 		//DISPLAY HEALTH
 		healthBar = game.add.text(game.world.width - 150,10,'HEALTH: ' + player.health +'%', {font:'20px Cambria', fill: '#fa0a0a'});
@@ -120,13 +147,11 @@ demo.state1.prototype = {
 		};
 		healthBar.fixedToCamera = true;
 		healthBar.cameraOffset.setTo(2,5);
-        house = map.createLayer('house');
+        
         		
     },
     
     update: function() {
-        
-        
         
         //causes zombies to constantly move towards player
         zombies.forEach(game.physics.arcade.moveToObject, game.physics.arcade, false, player, 100);
@@ -230,8 +255,6 @@ demo.state1.prototype = {
         
         game.physics.arcade.overlap(zombies, bullets, this.hitGroup);
 		game.physics.arcade.overlap(player, zombies, this.collidePlayer);
-
-
     },  
 	
 	render: function(){
@@ -255,7 +278,6 @@ demo.state1.prototype = {
     },
     	
     //give hunter health and other game objects health
-
 	collidePlayer: function(player, zombie)
 	{
 		healthBar.render();
@@ -273,7 +295,6 @@ demo.state1.prototype = {
         blood.play('bloodSplatter', 15, false, true);
     },
     
-    
     /*
     findObjectsByType: function(type, map, layer) {
         var result = new Array();
@@ -289,7 +310,5 @@ demo.state1.prototype = {
         return result;
       }
       */
-	
-
 };
         
