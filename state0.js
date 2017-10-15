@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 var demo = {}, cursors, vel = 200,  rocks, grass, player, zombies, bullets, fireRate = 100, nextFire = 0;
+=======
+//MAIN MENU
+var demo = {};
+>>>>>>> master
 
 demo.state0 = function(){};
+demo.state0.prototype = {
+    preload: function(){
 
+<<<<<<< HEAD
 demo.state0.prototype = { 
 	
 	
@@ -80,36 +88,15 @@ demo.state0.prototype = {
         game.physics.arcade.collide(zombies, zombies);
         
         cursors = game.input.keyboard.createCursorKeys();
+=======
     },
-    
-    update: function() {
+    create: function(){
+		
+>>>>>>> master
+    },
+    update: function(){
         
-        
-        
-        //causes zombies to constantly move towards player
-        zombies.forEach(game.physics.arcade.moveToObject, game.physics.arcade, false, player, 100);
-        game.physics.arcade.collide(zombies, zombies);
-        
-        
-        //checks angle between zombies and player and adjusts animation accordingly
-        if(zombies.forEach(function(self) {
-            angle = (Phaser.Math.normalizeAngle(game.physics.arcade.angleBetween(self, player)))
-            
-            if(angle >= 0 && angle <= 1.5708) {
-                self.animations.play('downRight');
-            }
-            if(angle > 1.5708 && angle <= 3.14159) {
-                self.animations.play('downLeft');
-            }
-            if(angle > 3.14159 && angle <= 4.71239) {
-                self.animations.play('upLeft');
-            }
-            if(angle > 4.71239 && angle <= 6.28319) {
-                self.animations.play('upRight');
-            }}
-            , game.physics.arcade, false));
-
-        
+<<<<<<< HEAD
         //game controls for player
         if(cursors.up.isDown){
           player.body.velocity.y = -vel;
@@ -158,3 +145,7 @@ demo.state0.prototype = {
 
 
 	
+=======
+    }
+};
+>>>>>>> master
