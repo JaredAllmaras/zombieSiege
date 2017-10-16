@@ -43,9 +43,11 @@ demo.state1.prototype = {
         var mapCopyWidth = mapCopy.length;
         var mapCopyHeight = mapCopy[0].length;
         
+        
+        //Sets
         for (var row = 0 ; row > mapCopyWidth; row += 1) {
             for (var col = 0 ; col > mapCopyHeight; col += 1) {
-                if (mapCopy[row][col] == 157) {
+                if (mapCopy[row][col] != 1 && mapCopy[row][col] != 0) {
                     mapCopy[row][col] = 1;
                 }
             }
@@ -56,6 +58,7 @@ demo.state1.prototype = {
         
         
         //LOADING MAP ASSETS AND MAP LAYERS
+        //FIRST LAYER "COLLISIONS" IS A PREDEFINED 
         var map = game.add.tilemap('field');
         map.addTilesetImage('collision', 'collision');
         map.addTilesetImage('grass', 'grass');
