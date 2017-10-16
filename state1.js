@@ -1,5 +1,10 @@
 //Start of gameplay
+<<<<<<< Updated upstream
 var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
+=======
+var demo = {};
+var cursors, vel = 200,  collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, houseHealth;
+>>>>>>> Stashed changes
 
 demo.state1 = function(){};
 
@@ -64,6 +69,34 @@ demo.state1.prototype = {
         
         map.setCollision(157, true, 'collisions');
 		
+<<<<<<< Updated upstream
+=======
+		/////////////////////////////////////////////////////
+        //CODE FOR PLAYER
+		/////////////////////////////////////////////////////
+        //enables physics to player and sets player settings
+        
+        game.physics.enable(player);
+        player.body.collideWorldBounds = true;
+        player.scale.setTo(0.7, 0.7);
+        player.anchor.setTo(0.5, 0.5);
+        game.camera.follow(player);
+        
+        player.animations.add('upRight', [0, 1, 2, 3], 9, true);
+        player.animations.add('upLeft', [4, 5, 6, 7], 9, true);
+        player.animations.add('right', [8, 9, 10, 11], 9, true);
+        player.animations.add('left', [12, 13, 14, 15], 9, true);
+        player.animations.add('downRight', [16, 17, 18, 19], 9, true);
+        player.animations.add('downLeft', [20, 21, 22, 23], 9, true);
+        player.animations.add('up', [24, 25, 26,27], 9, true);
+        player.animations.add('down', [28, 29, 30, 31], 9, true);
+        player.health = 1000;
+        player.damage = 1;
+	
+
+		player.events.onKilled.add(function(){
+			//PUT ANIMATION HERE FOR HUNTER DYING
+>>>>>>> Stashed changes
 			
 		/////////////////////////////////////////////////
 		//CODE FOR ZOMBIES
@@ -75,11 +108,10 @@ demo.state1.prototype = {
         //create zombies 
         for ( var i = 0; i<50; i++)
         {
-            zombie =
             zombies.create(game.world.randomX,game.world.randomY,'zombie');
             zombie.body.collideWorldBounds = true;
-            zombie.scale.setTo(0.7, 0.7);
-            zombie.anchor.setTo(0.5, 0.5);
+            zombie.scale.setTo(0.6, 0.6);
+            zombie.anchor.setTo(0.45, 0.45);
             zombie.alive = true;
             zombie.health = 100;
         }
@@ -143,15 +175,25 @@ demo.state1.prototype = {
 		//DISPLAY HEALTH
 		healthBar = game.add.text(game.world.width - 150,10,'HEALTH: ' + player.health +'%', {font:'20px Cambria', fill: '#fa0a0a'});
 		healthBar.render = function(){
-			healthBar.text = 'HEALTH : '+ player.health +'%'; 
+			healthBar.text = 'HEALTH : '+ player.health +'%';
+			
             
         //DISPLAY HOUSE
+		houseHealth = game.add.text(game.world.width - 150,20, "HOUSE: " + house.health + '%', {font:'20px Cambria', fill: '##272af1'});
+			houseHealth.text - 'HOUSE: '+ house.health +'%';
+		
         
             
 		};
 		healthBar.fixedToCamera = true;
 		healthBar.cameraOffset.setTo(2,5);
+<<<<<<< Updated upstream
         
+=======
+        house = map.createLayer('house');
+		houseHealth.fixedToCamera = true;
+		houseHealth.cameraOffset.setTp(2,10);
+>>>>>>> Stashed changes
         		
     },
     
@@ -285,7 +327,7 @@ demo.state1.prototype = {
 	collidePlayer: function(player, zombie)
 	{
 		healthBar.render();
-		player.health-= 10;
+		player.health-= 1;
 
 	},
     
