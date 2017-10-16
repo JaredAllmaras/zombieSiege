@@ -16,7 +16,15 @@ demo.state0.prototype = {
 
     },
     create: function(){
+<<<<<<< HEAD
+<<<<<<< HEAD
+        
+=======
 
+>>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
+=======
+
+>>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
 	game.physics.startSystem(Phaser.Physics.ARCADE);
     game.stage.backgroundColor = '#e82a2a';
     game.world.setBounds(0, 0, 4000, 3200);
@@ -32,7 +40,14 @@ demo.state0.prototype = {
 	
 	actionOnClick: function(){
 		button.onclick.start("state1.js");
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
 
+>>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
+=======
+
+>>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
 		
 	}
 };
