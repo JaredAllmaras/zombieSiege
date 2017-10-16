@@ -1,10 +1,15 @@
 //Start of gameplay
-<<<<<<< Updated upstream
+<<<<<<< HEAD
 var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
+var demo = {};
 =======
+
+var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
+
 var demo = {};
 var cursors, vel = 200,  collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, houseHealth;
->>>>>>> Stashed changes
+
+>>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
 
 demo.state1 = function(){};
 
@@ -72,8 +77,11 @@ demo.state1.prototype = {
         
         map.setCollision(157, true, 'collisions');
 		
-<<<<<<< Updated upstream
+
+<<<<<<< HEAD
 =======
+
+>>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
 		/////////////////////////////////////////////////////
         //CODE FOR PLAYER
 		/////////////////////////////////////////////////////
@@ -99,7 +107,7 @@ demo.state1.prototype = {
 
 		player.events.onKilled.add(function(){
 			//PUT ANIMATION HERE FOR HUNTER DYING
->>>>>>> Stashed changes
+
 			
 		/////////////////////////////////////////////////
 		//CODE FOR ZOMBIES
@@ -190,17 +198,15 @@ demo.state1.prototype = {
 		};
 		healthBar.fixedToCamera = true;
 		healthBar.cameraOffset.setTo(2,5);
-<<<<<<< Updated upstream
-        
-=======
+
         house = map.createLayer('house');
 		houseHealth.fixedToCamera = true;
 		houseHealth.cameraOffset.setTp(2,10);
->>>>>>> Stashed changes
+
         		
     },
     
-    update: function() {
+    function update () {
         
         //causes zombies to constantly move towards player
         zombies.forEach(game.physics.arcade.moveToObject, game.physics.arcade, false, player, 100);
@@ -306,11 +312,11 @@ demo.state1.prototype = {
 		game.physics.arcade.overlap(player, zombies, this.collidePlayer);
     },  
 	
-	render: function(){
+	function render(){
 	},
 
     
-    fire: function(playerSpeed, barrelX, barrelY) {
+    function fire (playerSpeed, barrelX, barrelY) {
 
         if (game.time.now > nextFire && bullets.countDead() > 0)
         {
