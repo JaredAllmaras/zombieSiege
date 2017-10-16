@@ -1,6 +1,6 @@
 //MAIN MENU
 var demo = {};
-var cursors, vel = 200,  rocks, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  button;
+var cursors, vel = 200,  rocks, grass, player, zombie, zombies, barrelX, barrelY , bullet, bullets, fireRate = 100, nextFire = 200,  button;
 demo.state0 = function(){};
 demo.state0.prototype = {
     preload: function(){
@@ -16,8 +16,7 @@ demo.state0.prototype = {
 
     },
     create: function(){
-<<<<<<< Updated upstream
-=======
+
 	game.physics.startSystem(Phaser.Physics.ARCADE);
     game.stage.backgroundColor = '#e82a2a';
     game.world.setBounds(0, 0, 4000, 3200);
@@ -33,7 +32,7 @@ demo.state0.prototype = {
 	
 	actionOnClick: function(){
 		button.onclick.start("state1.js");
->>>>>>> Stashed changes
+
 		
 	}
 };
