@@ -2,17 +2,10 @@
 
 var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
 var demo = {};
-
-
 var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
-
-
 var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
-
-
 var demo = {};
 var cursors, vel = 200,  collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, houseHealth;
-
 
 demo.state1 = function(){};
 
@@ -31,8 +24,8 @@ demo.state1.prototype = {
         game.load.spritesheet('bloodSplatter', 'assets/sprites/bloodSpritesheet.png', 170, 120);
         game.load.json('gameMap', 'assets/Tilemaps/singleHouseMap.json');
     },
-
-    create: function() {
+}
+    function create() {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#DDDDDD';
         game.world.setBounds(0, 0, 4000, 3200);
@@ -59,7 +52,7 @@ demo.state1.prototype = {
             }
         }
         
-        
+    }
         pathingGrid = new PF.Grid(mapCopy);
         
         
