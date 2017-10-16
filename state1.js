@@ -329,14 +329,14 @@ demo.state1.prototype = {
     },
     	
     //give hunter health and other game objects health
-	collidePlayer: function(player, zombie)
+	function collidePlayer(player, zombie)
 	{
 		healthBar.render();
 		player.health-= 1;
 
 	},
     
-    hitGroup: function(enemy, bullet) {
+    function hitGroup(enemy, bullet) {
         bullet.kill();
         enemy.damage(20);
         var blood = game.add.sprite(enemy.x, enemy.y, 'bloodSplatter');
@@ -344,7 +344,7 @@ demo.state1.prototype = {
         blood.anchor.setTo(0.5, 0.5);
         blood.animations.add('bloodSplatter');
         blood.play('bloodSplatter', 15, false, true);
-    },
+    }
     
     /*
     findObjectsByType: function(type, map, layer) {
@@ -361,5 +361,5 @@ demo.state1.prototype = {
         return result;
       }
       */
-};
-        
+                                   
+                                
