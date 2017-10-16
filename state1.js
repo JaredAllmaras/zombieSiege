@@ -1,23 +1,18 @@
 //Start of gameplay
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
 var demo = {};
-=======
+
 
 var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
-=======
+
 
 var cursors, vel = 200, pathFinder, gameWidth, gameHeight, tileSize = 32, collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, pathingGrid;
->>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
+
 
 var demo = {};
 var cursors, vel = 200,  collisions, grass, player,zombie, zombies, barrelX, barrelY ,bullet, bullets, fireRate = 100, nextFire = 200,  healthBar, houseHealth;
 
-<<<<<<< HEAD
->>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
-=======
->>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
 
 demo.state1 = function(){};
 
@@ -83,14 +78,6 @@ demo.state1.prototype = {
         map.setCollision(157, true, 'collisions');
 		
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
-=======
-
->>>>>>> dc91474f224cb5dd107ab828d2e3430f68decef7
 		/////////////////////////////////////////////////////
         //CODE FOR PLAYER
 		/////////////////////////////////////////////////////
